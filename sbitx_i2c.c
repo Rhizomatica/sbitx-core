@@ -68,7 +68,7 @@ void i2c_write_si5351(radio *radio_h, uint8_t reg, uint8_t val){
     pthread_mutex_unlock(&radio_h->i2c_mutex);
 }
 
-bool open_i2c(radio *radio_h)
+bool i2c_open(radio *radio_h)
 {
     pthread_mutex_init(&radio_h->i2c_mutex, NULL);
 
@@ -80,7 +80,7 @@ bool open_i2c(radio *radio_h)
     return true;
 }
 
-bool close_i2c(radio *radio_h)
+bool i2c_close(radio *radio_h)
 {
     if (close(radio_h->i2c_bus) >= 0)
         return true;

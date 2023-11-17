@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "radio.h"
+#include "sbitx_core.h"
 
 int i2c_read_pwr_levels(radio *radio_h, uint8_t *response);
 void i2c_write_si5351(radio *radio_h, uint8_t reg, uint8_t val);
