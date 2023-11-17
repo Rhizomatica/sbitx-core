@@ -1,11 +1,48 @@
-#ifndef
+/* sBitx core
+ * Copyright (C) 2023 Rhizomatica
+ * Author: Rafael Diniz <rafael@riseup.net>
+ *
+ * This is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3, or (at your option)
+ * any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
 
-RADIO_H_
+#ifndef RADIO_H_
 #define RADIO_H_
 
-struct {
+#include <stdint.h>
+#include <pthread.h>
 
-    int tx_rx;
+
+#define OPERATING_MODE_VOICE 0 // local operation
+#define OPERATING_MODE_DATA 1 // data operation
+
+#define RADIO_RX 0
+#define RADIO_TX 1
+
+#define MODE_LSB 0
+#define MODE_USB 1
+
+#define AGC_OFF 0
+#define AGC_SLOW 0
+#define AGC_MED 0
+#define AGC_FAST 0
+
+typedef struct {
+
+    int radio_rx_tx; // tx or rx
 
     int operating_mode; // ANALOG or DIGITAL
 
@@ -45,7 +82,8 @@ struct {
     int volume;
 
     int serial_number;
-}
+} radio_features;
+
 
 
 #endif // RADIO_H_
