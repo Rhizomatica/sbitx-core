@@ -38,3 +38,18 @@ void hw_init(radio *radio_h)
     // Si5351 SETUP
     setup_oscillators(radio_h);
 }
+
+void hw_shutdown(radio *radio_h)
+{
+    i2c_close(radio_h);
+
+    // WiringPi has no function to close/shutdown resources
+    // should we stop the Si5351 clocks?
+}
+
+void set_frequency(radio *radio_h, uint32_t frequency)
+{
+    radio_h->frequency = frequency;
+     // Were we are setting the real frequency of the radio (in USB), without the 24 kHz offset in Ashhar implementation (just "- 24000" to replicate the behavior)
+    si5351bx_setfreq(2, radio_h->frequency + radio_h->bfo_frequency);
+}

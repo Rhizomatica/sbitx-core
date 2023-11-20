@@ -77,5 +77,9 @@ typedef struct
 
 
 void hw_init(radio *radio_h);
+void hw_shutdown(radio *radio_h);
+
+void set_frequency(radio *radio_h, uint32_t frequency);
+
 
 #endif // SBITX_CORE_H_
