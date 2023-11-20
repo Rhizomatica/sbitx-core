@@ -62,7 +62,11 @@ void gpio_init(radio *radio_h)
     wiringPiISR(ENC1_SW, INT_EDGE_FALLING, knob_a_pressed);
     wiringPiISR(ENC2_SW, INT_EDGE_FALLING, knob_b_pressed);
 
+    wiringPiISR(ENC1_SW, INT_EDGE_RISING, ptt_down);
+    wiringPiISR(ENC2_SW, INT_EDGE_FALLING, ptt_up);
+
 }
+
 
 void enc_init(encoder *e, int speed, int pin_a, int pin_b)
 {
@@ -70,6 +74,16 @@ void enc_init(encoder *e, int speed, int pin_a, int pin_b)
     e->pin_b = pin_b;
     e->speed = speed;
     e->history = 5;
+}
+
+void ptt_down()
+{
+    radio_gpio_h->key_down = true;
+}
+
+void ptt_up()
+{
+    radio_gpio_h->key_down = false;
 }
 
 void knob_a_pressed(void)

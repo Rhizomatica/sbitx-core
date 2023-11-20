@@ -22,6 +22,7 @@
 #ifndef SBITX_CORE_H_
 #define SBITX_CORE_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <pthread.h>
 
@@ -73,6 +74,9 @@ typedef struct
 
     uint32_t knob_a_pressed;
     uint32_t knob_b_pressed;
+
+    bool key_down;
+
 } radio;
 
 
