@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     uint32_t frequency = atoi(argv[1]);
 
     // these are mandatory fields to be filled before hw_init()
+    memset(&radio_h, 0, sizeof(radio));
     strcpy(radio_h.i2c_device, "/dev/i2c-22");
     radio_h.bfo_frequency = 40035000;
 
@@ -28,8 +29,8 @@ int main(int argc, char *argv[])
     int loop_counter = 30;
     while(loop_counter--)
     {
-        printf("volume_ticks: %u\n", radio_h.volume_ticks);
-        printf("tuning_ticks: %u\n", radio_h.tuning_ticks);
+        printf("volume_ticks: %d\n", radio_h.volume_ticks);
+        printf("tuning_ticks: %d\n", radio_h.tuning_ticks);
         printf("knob A pressed: %u\n", radio_h.knob_a_pressed);
         printf("knob B pressed: %u\n", radio_h.knob_b_pressed);
         sleep(1);
