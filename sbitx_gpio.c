@@ -46,8 +46,8 @@ void gpio_init(radio *radio_h)
     }
 
     // Initialize our two encoder structs (front pannel knobs)
-	enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
-	enc_init(&radio_h->enc_b, ENC_FAST, ENC2_A, ENC2_B);
+    enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
+    enc_init(&radio_h->enc_b, ENC_FAST, ENC2_A, ENC2_B);
 
     radio_h->volume_ticks = 0;
     radio_h->tuning_ticks = 0;
@@ -62,9 +62,7 @@ void gpio_init(radio *radio_h)
     wiringPiISR(ENC1_SW, INT_EDGE_FALLING, knob_a_pressed);
     wiringPiISR(ENC2_SW, INT_EDGE_FALLING, knob_b_pressed);
 
-    wiringPiISR(PTT, INT_EDGE_RISING, ptt_down);
-    wiringPiISR(PTT, INT_EDGE_FALLING, ptt_up);
-
+    wiringPiISR(PTT, INT_EDGE_BOTH, ptt_change);
 }
 
 
@@ -76,14 +74,12 @@ void enc_init(encoder *e, int speed, int pin_a, int pin_b)
     e->history = 5;
 }
 
-void ptt_down()
+void ptt_change()
 {
-    radio_gpio_h->key_down = true;
-}
-
-void ptt_up()
-{
-    radio_gpio_h->key_down = false;
+    if (digitalRead(PTT) == LOW)
+        radio_gpio_h->key_down = true;
+    else
+        radio_gpio_h->key_down = false;
 }
 
 void knob_a_pressed(void)
