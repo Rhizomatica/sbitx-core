@@ -63,6 +63,7 @@ void gpio_init(radio *radio_h)
     wiringPiISR(ENC2_SW, INT_EDGE_FALLING, knob_b_pressed);
 
     wiringPiISR(PTT, INT_EDGE_BOTH, ptt_change);
+    wiringPiISR(DASH, INT_EDGE_BOTH, dash_change);
 }
 
 
@@ -80,6 +81,14 @@ void ptt_change()
         radio_gpio_h->key_down = true;
     else
         radio_gpio_h->key_down = false;
+}
+
+void dash_change()
+{
+    if (digitalRead(DASH) == LOW)
+        radio_gpio_h->dash_down = true;
+    else
+        radio_gpio_h->dash_down = false;
 }
 
 void knob_a_pressed(void)

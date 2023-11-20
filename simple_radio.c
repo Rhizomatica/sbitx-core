@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
         printf("knob A pressed: %u\n", radio_h.knob_a_pressed);
         printf("knob B pressed: %u\n", radio_h.knob_b_pressed);
         printf("PTT: %s\n", radio_h.key_down?"DOWN":"UP");
+        printf("DASH: %s\n", radio_h.dash_down?"DOWN":"UP");
         sleep(1);
     }
 

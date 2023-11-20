@@ -76,6 +76,7 @@ typedef struct
     uint32_t knob_b_pressed;
 
     bool key_down;
+    bool dash_down;
 
 } radio;
 

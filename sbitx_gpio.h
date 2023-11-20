@@ -11,7 +11,7 @@ void tuning_isr_b(void);
 void knob_a_pressed(void);
 void knob_b_pressed(void);
 void ptt_change(void);
-
+void dash_change(void);
 
 // encoder-related functions
 void enc_init(encoder *e, int speed, int pin_a, int pin_b);
