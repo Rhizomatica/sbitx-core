@@ -2,6 +2,8 @@ CC=gcc
 CFLAGS=-g -Wall -std=gnu11
 LDFLAGS=-lwiringPi -li2c
 
+.PHONY: clean
+
 all: simple_radio
 
 simple_radio: sbitx_i2c.o sbitx_core.o simple_radio.o
@@ -15,3 +17,6 @@ sbitx_core.o: sbitx_core.c sbitx_core.h
 
 simple_radio.o: simple_radio.c
 	$(CC) -c $(CFLAGS) simple_radio.c -o simple_radio.o
+
+clean:
+	rm -f simple_radio
