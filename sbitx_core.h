@@ -78,15 +78,4 @@ typedef struct
 
 void hw_init(radio *radio_h);
 
-void tuning_isr_a(void);
-void tuning_isr_b(void);
-void knob_a_pressed(void);
-void knob_b_pressed(void);
-
-void enc_init(encoder *e, int speed, int pin_a, int pin_b);
-int enc_state (encoder *e);
-int enc_read(encoder *e);
-
-
-
 #endif // SBITX_CORE_H_
