@@ -22,6 +22,7 @@
 #include "sbitx_core.h"
 #include "sbitx_i2c.h"
 #include "sbitx_gpio.h"
+#include "sbitx_si5351.h"
 
 #include <wiringPi.h>
 
@@ -34,4 +35,6 @@ void hw_init(radio *radio_h)
     // GPIO SETUP
     gpio_init(radio_h);
 
+    // Si5351 SETUP
+    setup_oscillators(radio_h);
 }

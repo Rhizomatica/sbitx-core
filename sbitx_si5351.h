@@ -1,6 +1,8 @@
 /* sBitx core
- * Copyright (C) 2023 Rhizomatica
- * Author: Rafael Diniz <rafael@riseup.net>
+ * Copyright (C) 2017-2023 Jerry Gaffke, KE7ER
+ *
+ * GPLv3 code from Jerry Gaffe, "An minimalist standalone set of Si5351
+ * routines", later modified by Ashhar Farhan and Rafael Diniz.
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +21,18 @@
  *
  */
 
-#ifndef SBITX_I2C_H_
-#define SBITX_I2C_H_
+#ifndef SBITX_SI5351_H_
+#define SBITX_SI5351_H_
 
-#define ATTINY85_I2C 0x08
-#define SI5351_I2C 0x60
-
-#include <stdbool.h>
 #include <stdint.h>
-
 #include "sbitx_core.h"
 
-bool i2c_open(radio *radio_h);
-bool i2c_close(radio *radio_h);
+void setup_oscillators(radio *radio_h);
 
-int i2c_read_pwr_levels(radio *radio_h, uint8_t *response);
-void i2c_write_si5351(radio *radio_h, uint8_t reg, uint8_t val);
+void si5351_set_calibration(int32_t cal);
+void si5351bx_init(); 
+void si5351bx_setfreq(uint8_t clknum, uint32_t fout);
+void si5351_reset();
+void si5351a_clkoff(uint8_t clk);
 
-#endif // SBITX_I2C_H_
+#endif

@@ -24,14 +24,15 @@
 
 #include "sbitx_gpio.h"
 
-radio *internal_radio_h;
+// global radio handle pointer used for the callback functions
+radio *radio_gpio_h;
 
-// for now this initializes the GPIO and already initialize the structures for
-// encoder/knobs reading by the software
+// for now this initializes the GPIO and also initializes the structures for
+// encoder/knobs for easy reading by application
 void gpio_init(radio *radio_h)
 {
     // we need the radio handler available for the callbacks.
-    internal_radio_h = radio_h;
+    radio_gpio_h = radio_h;
 
     // GPIO SETUP
     wiringPiSetup();
@@ -73,12 +74,12 @@ void enc_init(encoder *e, int speed, int pin_a, int pin_b)
 
 void knob_a_pressed(void)
 {
-    internal_radio_h->knob_a_pressed++;
+    radio_gpio_h->knob_a_pressed++;
 }
 
 void knob_b_pressed(void)
 {
-    internal_radio_h->knob_b_pressed++;
+    radio_gpio_h->knob_b_pressed++;
 }
 
 
@@ -86,14 +87,14 @@ void tuning_isr_a(void)
 {
     static bool first = true;
 
-    int tuning = enc_read(&internal_radio_h->enc_a);
+    int tuning = enc_read(&radio_gpio_h->enc_a);
 
     if (!first)
     {
         if (tuning < 0)
-            internal_radio_h->volume_ticks++;
+            radio_gpio_h->volume_ticks++;
         if (tuning > 0)
-            internal_radio_h->volume_ticks--;
+            radio_gpio_h->volume_ticks--;
     }
     else
         first = false;
@@ -103,14 +104,14 @@ void tuning_isr_b(void)
 {
     static bool first = true;
 
-    int tuning = enc_read(&internal_radio_h->enc_b);
+    int tuning = enc_read(&radio_gpio_h->enc_b);
 
     if (!first)
     {
         if (tuning < 0)
-            internal_radio_h->tuning_ticks++;
+            radio_gpio_h->tuning_ticks++;
         if (tuning > 0)
-            internal_radio_h->tuning_ticks--;
+            radio_gpio_h->tuning_ticks--;
     }
     else
         first = false;
