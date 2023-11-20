@@ -39,6 +39,12 @@
 #define PTT      7
 #define DASH    21
 
+#define TX_LINE 4
+#define TX_POWER 27
+#define LPF_A 5
+#define LPF_B 6
+#define LPF_C 10
+#define LPF_D 11
 
 /* Encoder speed defines */
 #define ENC_FAST 1

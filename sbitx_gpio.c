@@ -45,6 +45,20 @@ void gpio_init(radio *radio_h)
         pullUpDnControl(pins[i], PUD_UP);
     }
 
+    //setup the LPFs and TX lines to initial state
+    pinMode(TX_LINE, OUTPUT);
+    pinMode(TX_POWER, OUTPUT);
+    pinMode(LPF_A, OUTPUT);
+    pinMode(LPF_B, OUTPUT);
+    pinMode(LPF_C, OUTPUT);
+    pinMode(LPF_D, OUTPUT);
+    digitalWrite(LPF_A, LOW);
+    digitalWrite(LPF_B, LOW);
+    digitalWrite(LPF_C, LOW);
+    digitalWrite(LPF_D, LOW);
+    digitalWrite(TX_LINE, LOW);
+    digitalWrite(TX_POWER, LOW);
+
     // Initialize our two encoder structs (front pannel knobs)
     enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
     enc_init(&radio_h->enc_b, ENC_FAST, ENC2_A, ENC2_B);
