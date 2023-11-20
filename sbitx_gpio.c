@@ -59,8 +59,8 @@ void gpio_init(radio *radio_h)
     wiringPiISR(ENC1_A, INT_EDGE_BOTH, tuning_isr_a);
     wiringPiISR(ENC1_B, INT_EDGE_BOTH, tuning_isr_a);
 
-    wiringPiISR(ENC1_SW, INT_EDGE_BOTH, knob_a_pressed);
-    wiringPiISR(ENC2_SW, INT_EDGE_BOTH, knob_b_pressed);
+    wiringPiISR(ENC1_SW, INT_EDGE_FALLING, knob_a_pressed);
+    wiringPiISR(ENC2_SW, INT_EDGE_FALLING, knob_b_pressed);
 
 }
 

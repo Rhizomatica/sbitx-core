@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     int loop_counter = 30;
     while(loop_counter--)
     {
+        printf("\n");
         printf("volume_ticks: %d\n", radio_h.volume_ticks);
         printf("tuning_ticks: %d\n", radio_h.tuning_ticks);
         printf("knob A pressed: %u\n", radio_h.knob_a_pressed);
