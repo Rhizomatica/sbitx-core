@@ -75,7 +75,9 @@ typedef struct
     // Radio status
     uint32_t frequency;
     uint32_t bfo_frequency;
+    bool txrx_relay; // IN_RX or IN_TX
 
+    // front panel controls and status
     encoder enc_a;
     encoder enc_b;
 
@@ -85,10 +87,9 @@ typedef struct
     uint32_t knob_a_pressed;
     uint32_t knob_b_pressed;
 
-    bool key_down;
+    bool key_down; // this is the ptt button
     bool dash_down;
 
-    bool txrx_relay;
 } radio;
 
 
