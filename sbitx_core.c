@@ -8,18 +8,20 @@ radio *internal_radio_h;
 
 void hw_init(radio *radio_h)
 {
+    // we need the radio handler available for the callbacks.
     internal_radio_h = radio_h;
+
     // I2C SETUP
     i2c_open(radio_h);
 
     // GPIO SETUP
-	wiringPiSetup();
+    wiringPiSetup();
 
     char pins[13] = {0, 2, 3, 6, 7, 10, 11, 12, 13, 14, 21, 25, 27};
-	for (int i = 0; i < 13; i++){
-		pinMode(pins[i], INPUT);
-		pullUpDnControl(pins[i], PUD_UP);
-	}
+    for (int i = 0; i < 13; i++){
+        pinMode(pins[i], INPUT);
+        pullUpDnControl(pins[i], PUD_UP);
+    }
 
     // Initialize our two encoders (front pannel knobs) struct
 	enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
@@ -44,10 +46,10 @@ void hw_init(radio *radio_h)
 
 void enc_init(encoder *e, int speed, int pin_a, int pin_b)
 {
-	e->pin_a = pin_a;
-	e->pin_b = pin_b;
-	e->speed = speed;
-	e->history = 5;
+    e->pin_a = pin_a;
+    e->pin_b = pin_b;
+    e->speed = speed;
+    e->history = 5;
 }
 
 void knob_a_pressed(void)
@@ -63,8 +65,10 @@ void knob_b_pressed(void)
 
 void tuning_isr_a(void)
 {
-	int tuning = enc_read(&internal_radio_h->enc_a);
     static bool first = true;
+
+    int tuning = enc_read(&internal_radio_h->enc_a);
+
     if (!first)
     {
         if (tuning < 0)
@@ -76,9 +80,12 @@ void tuning_isr_a(void)
         first = false;
 }
 
-void tuning_isr_b(void){
-	int tuning = enc_read(&internal_radio_h->enc_b);
+void tuning_isr_b(void)
+{
     static bool first = true;
+
+    int tuning = enc_read(&internal_radio_h->enc_b);
+
     if (!first)
     {
         if (tuning < 0)
@@ -92,7 +99,7 @@ void tuning_isr_b(void){
 
 int enc_state (encoder *e)
 {
-	return (digitalRead(e->pin_a) ? 1 : 0) + (digitalRead(e->pin_b) ? 2: 0);
+    return (digitalRead(e->pin_a) ? 1 : 0) + (digitalRead(e->pin_b) ? 2: 0);
 }
 
 int enc_read(encoder *e)
