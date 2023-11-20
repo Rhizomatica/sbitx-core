@@ -27,24 +27,25 @@
 #include <pthread.h>
 
 
-/* Pin definitions */
-#define ENC1_A  13
-#define ENC1_B  12
-#define ENC1_SW 14
+/* Pin definitions following WirinpiPi numbering // BCM numbering commented */
+#define ENC1_A  13  // BCM  9
+#define ENC1_B  12  // BCM 10
+#define ENC1_SW 14  // BCM 11
 
-#define ENC2_A   0
-#define ENC2_B   2
-#define ENC2_SW  3
+#define ENC2_A   0  // BCM 17
+#define ENC2_B   2  // BCM 27
+#define ENC2_SW  3  // BCM 22
 
-#define PTT      7
-#define DASH    21
+#define PTT      7  // BCM  4
+#define DASH    21  // BCM  5
 
-#define TX_LINE 4
-#define TX_POWER 27
-#define LPF_A 5
-#define LPF_B 6
-#define LPF_C 10
-#define LPF_D 11
+#define TX_LINE 4   // BCM 23
+#define TX_POWER 27 // BCM 16
+#define LPF_A 5     // BCM 24
+#define LPF_B 6     // BCM 25
+#define LPF_C 10    // BCM  8
+#define LPF_D 11    // BCM  7
+
 
 /* Encoder speed defines */
 #define ENC_FAST 1
