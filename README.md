@@ -6,6 +6,7 @@ are currently implemented:
 
 * I2C communication to the Si5351a and ATTiny85 (power fwd and ref readings)
 * GPIO using the WiringPi library, for all kind of radio controls (encoders, lpf bank, tx/rx)
+* Si5351a control functions
 
 # Author
 
