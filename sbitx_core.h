@@ -51,6 +51,9 @@
 #define ENC_FAST 1
 #define ENC_SLOW 5
 
+/* tx/rx states */
+#define IN_RX 0
+#define IN_TX 1
 
 //encoder state variables
 typedef struct
@@ -85,6 +88,7 @@ typedef struct
     bool key_down;
     bool dash_down;
 
+    bool txrx_relay;
 } radio;
 
 
