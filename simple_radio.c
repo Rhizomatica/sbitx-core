@@ -36,6 +36,13 @@ int main(int argc, char *argv[])
         printf("knob B pressed: %u\n", radio_h.knob_b_pressed);
         printf("PTT: %s\n", radio_h.key_down?"DOWN":"UP");
         printf("DASH: %s\n", radio_h.dash_down?"DOWN":"UP");
+
+        if (radio_h.key_down)
+            tr_switch(&radio_h, IN_TX);
+        else
+            tr_switch(&radio_h, IN_RX);
+
+        printf("TR_SWITCH: %s\n", radio_h.txrx_state?"TX":"RX");
         sleep(1);
     }
 

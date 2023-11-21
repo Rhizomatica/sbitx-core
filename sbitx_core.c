@@ -53,3 +53,52 @@ void set_frequency(radio *radio_h, uint32_t frequency)
      // Were we are setting the real frequency of the radio (in USB), without the 24 kHz offset in Ashhar implementation (just "- 24000" to replicate the behavior)
     si5351bx_setfreq(2, radio_h->frequency + radio_h->bfo_frequency);
 }
+
+void lpf_off(radio *radio_h)
+{
+    digitalWrite(LPF_A, LOW);
+    digitalWrite(LPF_B, LOW);
+    digitalWrite(LPF_C, LOW);
+    digitalWrite(LPF_D, LOW);
+
+}
+
+void lpf_set(radio *radio_h)
+{
+    int lpf = 0;
+
+    if (radio_h->frequency < 5500000)
+        lpf = LPF_D;
+	else if (radio_h->frequency < 10500000)
+		lpf = LPF_C;
+	else if (radio_h->frequency < 18500000)
+		lpf = LPF_B;
+	else if (radio_h->frequency < 30000000)
+		lpf = LPF_A;
+
+    digitalWrite(lpf, HIGH);
+}
+
+
+void tr_switch(radio *radio_h, bool txrx_state){
+
+    if (txrx_state == radio_h->txrx_state)
+        return;
+
+    if (txrx_state == IN_TX)
+    {
+        radio_h->txrx_state = IN_TX;
+
+        lpf_off(radio_h); delay(2);
+        digitalWrite(TX_LINE, HIGH); delay(2);
+        lpf_set(radio_h);
+    }
+    else
+    {
+        radio_h->txrx_state = IN_RX;
+
+        lpf_off(radio_h); delay(2);
+        digitalWrite(TX_LINE, LOW); delay(2);
+        lpf_set(radio_h);
+    }
+}

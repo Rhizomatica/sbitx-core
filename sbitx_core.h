@@ -75,7 +75,7 @@ typedef struct
     // Radio status
     uint32_t frequency;
     uint32_t bfo_frequency;
-    bool txrx_relay; // IN_RX or IN_TX
+    bool txrx_state; // IN_RX or IN_TX
 
     // front panel controls and status
     encoder enc_a;
@@ -97,6 +97,13 @@ void hw_init(radio *radio_h);
 void hw_shutdown(radio *radio_h);
 
 void set_frequency(radio *radio_h, uint32_t frequency);
+void tr_switch(radio *radio_h, bool txrx_state);
 
+
+// disconnect all LPFs
+void lpf_off(radio *radio_h);
+
+// set appropriate LPF according to the frequency
+void lpf_set(radio *radio_h);
 
 #endif // SBITX_CORE_H_
