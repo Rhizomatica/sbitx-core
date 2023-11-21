@@ -14,7 +14,7 @@ The source simple_radio.c demonstrates how to use some of currently implemented 
 This code expects the I2C bus to be kernel I2C interface. Make sure you have one of the dtoverlays
 in /boot/config.txt
 
-For loading the I2C BB driver in the appropriate sBitx pins, with kernel RTC clock driver loaded (for use as system clock, this is what I use):
+For loading the I2C Bit-Banged (BB) driver in the appropriate sBitx pins, with kernel RTC clock driver loaded (for use as system clock, this is what I use):
 ```
 dtoverlay=i2c-rtc-gpio,ds1307,bus=2,i2c_gpio_sda=13,i2c_gpio_scl=6
 ```
@@ -39,7 +39,7 @@ With gpio and RTC, it lists as:
 i2c-22  i2c             i2c-gpio-rtc@0                          I2C adapter
 ```
 
-By booking the I2C bus, use the appropriate device file, eg., /dev/i2c-22 or /dev/i2c-2, in the sBitx core API.
+By looking the I2C bus where the I2C BB driver is loaded, use the appropriate device file, eg., /dev/i2c-22 or /dev/i2c-2, in the sBitx core API.
 
 
 
