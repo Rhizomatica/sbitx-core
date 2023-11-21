@@ -69,12 +69,12 @@ void lpf_set(radio *radio_h)
 
     if (radio_h->frequency < 5500000)
         lpf = LPF_D;
-	else if (radio_h->frequency < 10500000)
-		lpf = LPF_C;
-	else if (radio_h->frequency < 18500000)
-		lpf = LPF_B;
-	else if (radio_h->frequency < 30000000)
-		lpf = LPF_A;
+    else if (radio_h->frequency < 10500000)
+        lpf = LPF_C;
+    else if (radio_h->frequency < 18500000)
+        lpf = LPF_B;
+    else if (radio_h->frequency < 30000000)
+        lpf = LPF_A;
 
     digitalWrite(lpf, HIGH);
 }
