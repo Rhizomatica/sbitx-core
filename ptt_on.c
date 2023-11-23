@@ -30,11 +30,13 @@
 #include "sbitx_core.h"
 
 radio radio_h;
+int shutdown = 0;
 
 void exit_ptt(int sig)
 {
     printf("PTT OFF. Exiting.\n");
     tr_switch(&radio_h, IN_RX);
+    shutdown = 1;
 }
 
 int main(int argc, char *argv[])
@@ -62,7 +64,7 @@ int main(int argc, char *argv[])
     tr_switch(&radio_h, IN_TX);
     printf("PTT ON.\n");
 
-    while (1)
+    while (!shutdown)
     {
         if (update_power_measurements(&radio_h))
         {
@@ -71,10 +73,6 @@ int main(int argc, char *argv[])
             usleep(30000);// 30 ms
         }
     }
-
-
-
-
 
 
     return EXIT_SUCCESS;
