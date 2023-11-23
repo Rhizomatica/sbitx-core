@@ -83,5 +83,7 @@ int main(int argc, char *argv[])
 
     printf("\n\nPTT OFF.\nExiting.\n");
 
+    hw_shutdown(&radio_h);
+
     return EXIT_SUCCESS;
 }
