@@ -24,8 +24,9 @@
 #include "sbitx_gpio.h"
 #include "sbitx_si5351.h"
 
+#include <string.h>
 #include <wiringPi.h>
-
+#include <unistd.h>
 
 void hw_init(radio *radio_h)
 {
@@ -45,6 +46,59 @@ void hw_shutdown(radio *radio_h)
 
     // WiringPi has no function to close/shutdown resources
     // should we stop the Si5351 clocks?
+}
+
+// reads the power measurements from I2C bus
+bool update_power_measurements(radio *radio_h)
+{
+	uint8_t response[4];
+
+    int count = i2c_read_pwr_levels(radio_h, response);
+
+	if(count != 4)
+		return false;
+
+    memcpy(&radio_h->fwd_power, response, 2);
+	memcpy(&radio_h->ref_power, response+2, 2);
+
+    return true;
+}
+
+// returns power * 10
+uint16_t get_fwd_power(radio *radio_h)
+{
+    // 40 should be we are using 40W as end of scale
+	uint16_t fwdvoltage =  (radio_h->fwd_power * 40) / 100; // 100 = bridge_compensation
+	uint16_t fwdpower = (fwdvoltage * fwdvoltage)/400;
+
+    return fwdpower;
+}
+
+uint16_t get_ref_power(radio *radio_h)
+{
+    // 40 should be we are using 40W as end of scale
+	uint16_t refvoltage =  (radio_h->ref_power * 40) / 100; // 100 = bridge_compensation
+	uint16_t refpower = (refvoltage * refvoltage)/400;
+
+    return refpower;
+
+}
+
+uint16_t get_swr(radio *radio_h)
+{
+    uint16_t vfwd = radio_h->fwd_power;
+    uint16_t vref = radio_h->ref_power;
+    uint16_t vswr;
+
+    if (vref == vfwd)
+        vfwd++;
+
+    if (vref > vfwd)
+		vswr = 100;
+	else
+		vswr = (10*(vfwd + vref))/(vfwd-vref);
+
+    return vswr;
 }
 
 void set_frequency(radio *radio_h, uint32_t frequency)

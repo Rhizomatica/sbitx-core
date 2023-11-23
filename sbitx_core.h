@@ -90,6 +90,9 @@ typedef struct
     bool key_down; // this is the ptt button
     bool dash_down;
 
+    // raw values from read from the ATTiny 10bit ADC over I2C
+    uint16_t fwd_power;
+    uint16_t ref_power;
 } radio;
 
 
@@ -105,5 +108,12 @@ void lpf_off(radio *radio_h);
 
 // set appropriate LPF according to the frequency
 void lpf_set(radio *radio_h);
+
+// fwd, ref and swr measurements functions
+// call update_power_measurements for a reading
+bool update_power_measurements(radio *radio_h);
+uint16_t get_fwd_power(radio *radio_h);
+uint16_t get_ref_power(radio *radio_h);
+uint16_t get_swr(radio *radio_h);
 
 #endif // SBITX_CORE_H_
