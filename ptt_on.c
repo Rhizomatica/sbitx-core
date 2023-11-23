@@ -36,7 +36,6 @@ void exit_ptt(int sig)
 {
     shutdown = 1;
     tr_switch(&radio_h, IN_RX);
-    printf("\nPTT OFF. Exiting.\n");
 }
 
 int main(int argc, char *argv[])
@@ -59,10 +58,13 @@ int main(int argc, char *argv[])
     hw_init(&radio_h);
 
     set_frequency(&radio_h, frequency);
-    printf("Frequency: %u\n", frequency);
+    printf("Frequency: %u.\n", frequency);
 
     tr_switch(&radio_h, IN_TX);
-    printf("PTT ON.\n");
+    printf("PTT ON.\n\n");
+
+    // hide cursor
+    printf("\e[?25l");
 
     while (!shutdown)
     {
@@ -72,10 +74,14 @@ int main(int argc, char *argv[])
                    (float) get_fwd_power(&radio_h) / 10,
                    (float) get_ref_power(&radio_h) / 10,
                    (float) get_swr(&radio_h) / 10);
-            usleep(30000);// 30 ms
+            usleep(50000);// 50 ms
         }
     }
 
+    // re-enable cursor
+    printf("\e[?25h");
+
+    printf("\n\nPTT OFF.\nExiting.\n");
 
     return EXIT_SUCCESS;
 }
