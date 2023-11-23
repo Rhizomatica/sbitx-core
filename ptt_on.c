@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     {
         if (update_power_measurements(&radio_h))
         {
-            printf("FWD PWR: %f , REF PWR: %f , SWR: %f         \r",
+            printf("FWD PWR: %2.1f , REF PWR: %2.1f , SWR: %2.1f         \r",
                    (float) get_fwd_power(&radio_h) / 10,
                    (float) get_ref_power(&radio_h) / 10,
                    (float) get_swr(&radio_h) / 10);
