@@ -68,8 +68,10 @@ int main(int argc, char *argv[])
     {
         if (update_power_measurements(&radio_h))
         {
-            printf("FWD PWR: %hu , REF PWR: %hu , SWR: %hu                \r", get_fwd_power(&radio_h),
-                   get_ref_power(&radio_h), get_swr(&radio_h));
+            printf("FWD PWR: %f , REF PWR: %f , SWR: %f         \r",
+                   (float) get_fwd_power(&radio_h) / 10,
+                   (float) get_ref_power(&radio_h) / 10,
+                   (float) get_swr(&radio_h) / 10);
             usleep(30000);// 30 ms
         }
     }
