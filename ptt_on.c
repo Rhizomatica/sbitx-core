@@ -34,9 +34,9 @@ int shutdown = 0;
 
 void exit_ptt(int sig)
 {
-    printf("PTT OFF. Exiting.\n");
-    tr_switch(&radio_h, IN_RX);
     shutdown = 1;
+    tr_switch(&radio_h, IN_RX);
+    printf("\nPTT OFF. Exiting.\n");
 }
 
 int main(int argc, char *argv[])
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     {
         if (update_power_measurements(&radio_h))
         {
-            printf("FWD PWR: %2.1f , REF PWR: %2.1f , SWR: %2.1f         \r",
+            printf("   FWD PWR: %.1f   REF PWR: %.1f   SWR: %.1f     \r",
                    (float) get_fwd_power(&radio_h) / 10,
                    (float) get_ref_power(&radio_h) / 10,
                    (float) get_swr(&radio_h) / 10);
