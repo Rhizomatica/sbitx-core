@@ -25,12 +25,23 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
+
 
 #include "sbitx_core.h"
+
+int shutdown = 0;
+
+void exit_ptt(int sig)
+{
+    shutdown = 1;
+}
 
 int main(int argc, char *argv[])
 {
     radio radio_h;
+
+    signal(SIGINT, exit_ptt);
 
     if (argc != 2)
     {
@@ -43,14 +54,16 @@ int main(int argc, char *argv[])
     memset(&radio_h, 0, sizeof(radio));
     strcpy(radio_h.i2c_device, "/dev/i2c-22");
     radio_h.bfo_frequency = 40035000;
+    radio_h.bridge_compensation = 100;
+
 
     hw_init(&radio_h);
 
     set_frequency(&radio_h, frequency);
 
-    int loop_counter = 30;
-    while(loop_counter--)
+    while(!shutdown)
     {
+        printf("\e[1;1H\e[2J");
         printf("\n");
         printf("volume_ticks: %d\n", radio_h.volume_ticks);
         printf("tuning_ticks: %d\n", radio_h.tuning_ticks);
@@ -64,10 +77,28 @@ int main(int argc, char *argv[])
         else
             tr_switch(&radio_h, IN_RX);
 
-        printf("TR_SWITCH: %s\n", radio_h.txrx_state ? "TX" : "RX" );
-        sleep(1);
+        printf("TR_SWITCH: %s\n", (radio_h.txrx_state == IN_TX) ? "TX" : "RX" );
+
+        if (radio_h.txrx_state == IN_TX)
+        {
+            if (update_power_measurements(&radio_h))
+            {
+                printf("   FWD PWR: %.1f   REF PWR: %.1f   SWR: %.1f\n",
+                       (float) get_fwd_power(&radio_h) / 10,
+                       (float) get_ref_power(&radio_h) / 10,
+                       (float) get_swr(&radio_h) / 10);
+            }
+            else
+            {
+                printf("   FWD PWR: ERROR   REF PWR: ERROR   SWR: ERROR     \r");
+            }
+        }
+
+        usleep(50000);// 50 ms
     }
 
+    printf("PTT OFF. Exiting.\n");
+    tr_switch(&radio_h, IN_RX);
 
     return EXIT_SUCCESS;
 }

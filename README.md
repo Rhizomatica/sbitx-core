@@ -56,7 +56,7 @@ Both syntax are identical:
 ```
 
 * ptt_on: enables the transmission line, and disables at exit (use Ctrl+C)
-* simple_radio: a simple radio implementation which allows for debugging the knobs and ptt
+* simple_radio: a simple radio implementation which allows for debugging most of radio features
 
 # Tinkerer tips
 
