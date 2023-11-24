@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 
     while(!shutdown)
     {
+        // clean screen
         printf("\e[1;1H\e[2J");
         printf("\n");
         printf("volume_ticks: %d\n", radio_h.volume_ticks);
@@ -97,8 +98,10 @@ int main(int argc, char *argv[])
         usleep(50000);// 50 ms
     }
 
-    printf("PTT OFF. Exiting.\n");
     tr_switch(&radio_h, IN_RX);
+    printf("PTT OFF. Exiting.\n");
+
+    hw_shutdown(&radio_h);
 
     return EXIT_SUCCESS;
 }
