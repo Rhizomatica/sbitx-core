@@ -72,4 +72,4 @@ nice spectrum view modes, available in the "docs/" directory of this repository.
 
 # Author
 
-Rafael Diniz
+Rafael Diniz @ Rhizomatica
