@@ -29,17 +29,16 @@
 
 #include "sbitx_core.h"
 
-radio radio_h;
 int shutdown = 0;
 
 void exit_ptt(int sig)
 {
     shutdown = 1;
-    tr_switch(&radio_h, IN_RX);
 }
 
 int main(int argc, char *argv[])
 {
+    radio radio_h;
 
     signal(SIGINT, exit_ptt);
 
@@ -54,6 +53,7 @@ int main(int argc, char *argv[])
     memset(&radio_h, 0, sizeof(radio));
     strcpy(radio_h.i2c_device, "/dev/i2c-22");
     radio_h.bfo_frequency = 40035000;
+    radio_h.bridge_compensation = 100;
 
     hw_init(&radio_h);
 
@@ -74,13 +74,19 @@ int main(int argc, char *argv[])
                    (float) get_fwd_power(&radio_h) / 10,
                    (float) get_ref_power(&radio_h) / 10,
                    (float) get_swr(&radio_h) / 10);
-            usleep(50000);// 50 ms
+
         }
+        else
+        {
+            printf("   FWD PWR: ERROR   REF PWR: ERROR   SWR: ERROR     \r");
+        }
+        usleep(50000);// 50 ms
     }
 
     // re-enable cursor
     printf("\e[?25h");
 
+    tr_switch(&radio_h, IN_RX);
     printf("\n\nPTT OFF.\nExiting.\n");
 
     hw_shutdown(&radio_h);

@@ -52,43 +52,46 @@ void hw_shutdown(radio *radio_h)
 bool update_power_measurements(radio *radio_h)
 {
 	uint8_t response[4];
+    uint16_t vfwd, vref;
 
     int count = i2c_read_pwr_levels(radio_h, response);
 
 	if(count != 4)
 		return false;
 
-    memcpy(&radio_h->fwd_power, response, 2);
-	memcpy(&radio_h->ref_power, response+2, 2);
+    memcpy(&vfwd, response, 2);
+	memcpy(&vref, response+2, 2);
+
+    radio_h->fwd_power = vfwd;
+    radio_h->ref_power = vref;
 
     return true;
 }
 
 // returns power * 10
-uint16_t get_fwd_power(radio *radio_h)
+uint32_t get_fwd_power(radio *radio_h)
 {
     // 40 should be we are using 40W as end of scale
-	uint16_t fwdvoltage =  (radio_h->fwd_power * 40) / 100; // 100 = bridge_compensation
-	uint16_t fwdpower = (fwdvoltage * fwdvoltage)/400;
+	uint32_t fwdvoltage =  (radio_h->fwd_power * 40) / 100; // 100 = bridge_compensation
+	uint32_t fwdpower = (fwdvoltage * fwdvoltage)/400;
 
     return fwdpower;
 }
 
-uint16_t get_ref_power(radio *radio_h)
+uint32_t get_ref_power(radio *radio_h)
 {
-    // 40 should be we are using 40W as end of scale
-	uint16_t refvoltage =  (radio_h->ref_power * 40) / 100; // 100 = bridge_compensation
-	uint16_t refpower = (refvoltage * refvoltage)/400;
+	uint32_t refvoltage =  (radio_h->ref_power * 40) / radio_h->bridge_compensation;
+	uint32_t refpower = (refvoltage * refvoltage) / 400;
 
     return refpower;
 
 }
 
-uint16_t get_swr(radio *radio_h)
+uint32_t get_swr(radio *radio_h)
 {
-    uint16_t vfwd = radio_h->fwd_power;
-    uint16_t vref = radio_h->ref_power;
-    uint16_t vswr;
+    uint32_t vfwd = radio_h->fwd_power;
+    uint32_t vref = radio_h->ref_power;
+    uint32_t vswr;
 
     if (vref == vfwd)
         vfwd++;
@@ -104,7 +107,8 @@ uint16_t get_swr(radio *radio_h)
 void set_frequency(radio *radio_h, uint32_t frequency)
 {
     radio_h->frequency = frequency;
-     // Were we are setting the real frequency of the radio (in USB), without the 24 kHz offset in Ashhar implementation (just "- 24000" to replicate the behavior)
+     // Were we are setting the real frequency of the radio (in USB, which is the current setup), without
+     // the 24 kHz offset as present in Ashhar implementation (just "- 24000" to replicate the behavior)
     si5351bx_setfreq(2, radio_h->frequency + radio_h->bfo_frequency);
 }
 

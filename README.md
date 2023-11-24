@@ -41,7 +41,22 @@ i2c-22  i2c             i2c-gpio-rtc@0                          I2C adapter
 
 By looking the I2C bus where the I2C BB driver is loaded, use the appropriate device file, eg., /dev/i2c-22 or /dev/i2c-2, in the sBitx core API.
 
+# Compilation
 
+Just type "make" to build the two example applications. 
+
+
+# usage
+
+Both syntax are identical:
+
+```
+# ptt_on <frequency in Hz>
+# simple_radio <frequency in Hz>
+```
+
+* ptt_on: enables the transmission line, and disables at exit (use Ctrl+C)
+* simple_radio: a simple radio implementation which allows for debugging the knobs and ptt
 
 # Tinkerer tips
 

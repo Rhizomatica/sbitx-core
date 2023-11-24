@@ -91,8 +91,11 @@ typedef struct
     bool dash_down;
 
     // raw values from read from the ATTiny 10bit ADC over I2C
-    uint16_t fwd_power;
-    uint16_t ref_power;
+    uint32_t fwd_power;
+    uint32_t ref_power;
+
+    uint32_t bridge_compensation;
+
 } radio;
 
 
@@ -102,18 +105,16 @@ void hw_shutdown(radio *radio_h);
 void set_frequency(radio *radio_h, uint32_t frequency);
 void tr_switch(radio *radio_h, bool txrx_state);
 
-
 // disconnect all LPFs
 void lpf_off(radio *radio_h);
-
 // set appropriate LPF according to the frequency
 void lpf_set(radio *radio_h);
 
 // fwd, ref and swr measurements functions
 // call update_power_measurements for a reading
 bool update_power_measurements(radio *radio_h);
-uint16_t get_fwd_power(radio *radio_h);
-uint16_t get_ref_power(radio *radio_h);
-uint16_t get_swr(radio *radio_h);
+uint32_t get_fwd_power(radio *radio_h);
+uint32_t get_ref_power(radio *radio_h);
+uint32_t get_swr(radio *radio_h);
 
 #endif // SBITX_CORE_H_
