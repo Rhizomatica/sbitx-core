@@ -46,7 +46,7 @@ By looking the I2C bus where the I2C BB driver is loaded, use the appropriate de
 Just type "make" to build the two example applications. 
 
 
-# usage
+# Usage
 
 Both syntax are identical:
 
