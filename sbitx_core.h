@@ -26,26 +26,24 @@
 #include <stdint.h>
 #include <pthread.h>
 
-
 /* Pin definitions following WirinpiPi numbering // GPIO numbering commented */
-#define ENC1_A  13  // GPIO  9
-#define ENC1_B  12  // GPIO 10
-#define ENC1_SW 14  // GPIO 11
+#define ENC1_A  13  // GPIO 17 // Pin 11
+#define ENC1_B  12  // GPIO 27 // Pin 13
+#define ENC1_SW 14  // GPIO 22 // Pin 15
 
-#define ENC2_A   0  // GPIO 17
-#define ENC2_B   2  // GPIO 27
-#define ENC2_SW  3  // GPIO 22
+#define ENC2_A   0  // GPIO 10 // Pin 19
+#define ENC2_B   2  // GPIO 9  // Pin 21
+#define ENC2_SW  3  // GPIO 11 // Pin 23
 
-#define PTT      7  // GPIO  4
-#define DASH    21  // GPIO  5
+#define PTT      7  // GPIO  4 // Pin 7
+#define DASH    21  // GPIO  5 // Pin 29
 
-#define TX_LINE 4   // GPIO 23
-#define TX_POWER 27 // GPIO 16
-#define LPF_A 5     // GPIO 24
-#define LPF_B 6     // GPIO 25
-#define LPF_C 10    // GPIO  8
-#define LPF_D 11    // GPIO  7
-
+#define TX_LINE 4   // GPIO 23 // Pin 16
+#define TX_POWER 27 // GPIO 16 // Pin 36
+#define LPF_A 5     // GPIO 24 // Pin 18
+#define LPF_B 6     // GPIO 25 // Pin 22
+#define LPF_C 10    // GPIO  8 // Pin 24
+#define LPF_D 11    // GPIO  7 // Pin 26
 
 /* Encoder speed defines */
 #define ENC_FAST 1
