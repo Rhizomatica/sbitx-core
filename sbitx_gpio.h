@@ -39,5 +39,7 @@ void enc_init(encoder *e, int speed, int pin_a, int pin_b);
 int enc_state (encoder *e);
 int enc_read(encoder *e);
 
+static int do_gpio_poll_add(unsigned int gpio);
+static void do_gpio_poll(void);
 
 #endif // SBITX_GPIO_H_
