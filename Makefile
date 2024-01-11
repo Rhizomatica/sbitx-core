@@ -34,16 +34,17 @@ else
 	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -march=x86-64-v2
 endif
 
+GPIOLIB_OBJS=gpiolib/gpiolib.o gpiolib/gpiochip_bcm2712.o gpiolib/gpiochip_bcm2835.o gpiolib/gpiochip_rp1.o gpiolib/util.o
 
 .PHONY: clean
 
 all: simple_radio ptt_on
 
-simple_radio: sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o simple_radio.o
-	$(CC) -o simple_radio sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o simple_radio.o $(LDFLAGS)
+simple_radio: sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o simple_radio.o $(GPIOLIB_OBJS)
+	$(CC) -o simple_radio sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o simple_radio.o $(GPIOLIB_OBJS) $(LDFLAGS)
 
-ptt_on: sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o ptt_on.o
-	$(CC) -o ptt_on sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o ptt_on.o $(LDFLAGS)
+ptt_on: sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o ptt_on.o $(GPIOLIB_OBJS)
+	$(CC) -o ptt_on sbitx_i2c.o sbitx_core.o sbitx_gpio.o sbitx_si5351.o ptt_on.o $(GPIOLIB_OBJS) $(LDFLAGS)
 
 
 ptt_on.o: ptt_on.c
@@ -65,7 +66,21 @@ sbitx_core.o: sbitx_core.c sbitx_core.h
 sbitx_si5351.o: sbitx_si5351.c sbitx_si5351.h
 	$(CC) -c $(CFLAGS) sbitx_si5351.c -o sbitx_si5351.o
 
+# gpiolib stuff
+gpiolib/gpiolib.o: gpiolib/gpiolib.c gpiolib/gpiolib.h
+	$(CC) -c $(CFLAGS) gpiolib/gpiolib.c -o gpiolib/gpiolib.o
 
+gpiolib/gpiochip_bcm2712.o: gpiolib/gpiochip_bcm2712.c gpiolib/gpiochip.h
+	$(CC) -c $(CFLAGS) gpiolib/gpiochip_bcm2712.c -o gpiolib/gpiochip_bcm2712.o
+
+gpiolib/gpiochip_bcm2835.o: gpiolib/gpiochip_bcm2835.c gpiolib/gpiochip.h
+	$(CC) -c $(CFLAGS) gpiolib/gpiochip_bcm2835.c -o gpiolib/gpiochip_bcm2835.o
+
+gpiolib/gpiochip_rp1.o:  gpiolib/gpiochip_rp1.c gpiolib/gpiochip.h
+	$(CC) -c $(CFLAGS) gpiolib/gpiochip_rp1.c -o gpiolib/gpiochip_rp1.o
+
+gpiolib/util.o: gpiolib/util.c gpiolib/util.h
+	$(CC) -c $(CFLAGS) gpiolib/util.c -o gpiolib/util.o
 
 clean:
-	rm -f simple_radio ptt_on *.o
+	rm -f simple_radio ptt_on *.o gpiolib/*.o
