@@ -1,5 +1,5 @@
 /* sBitx core
- * Copyright (C) 2023 Rhizomatica
+ * Copyright (C) 2023-2024 Rhizomatica
  * Author: Rafael Diniz <rafael@riseup.net>
  *
  * This is free software; you can redistribute it and/or modify
@@ -150,7 +150,6 @@ void tr_switch(radio *radio_h, bool txrx_state){
         lpf_off(radio_h); usleep(2000);
         gpio_set_drive(TX_LINE, DRIVE_HIGH); usleep(2000);
         lpf_set(radio_h);
-        // gpio_set_drive(TX_POWER, DRIVE_HIGH);
     }
     else
     {
@@ -159,6 +158,5 @@ void tr_switch(radio *radio_h, bool txrx_state){
         lpf_off(radio_h); usleep(2000);
         gpio_set_drive(TX_LINE, DRIVE_LOW); usleep(2000);
         lpf_set(radio_h);
-        // gpio_set_drive(TX_POWER, DRIVE_LOW);
     }
 }

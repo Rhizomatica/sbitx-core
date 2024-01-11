@@ -54,7 +54,7 @@ void gpio_init(radio *radio_h)
         return ;
     }
 
-    char pins[8] = {ENC1_A, ENC1_B, ENC1_SW, ENC2_A, ENC2_B, ENC2_SW, PTT, DASH};
+    unsigned pins[8] = {ENC1_A, ENC1_B, ENC1_SW, ENC2_A, ENC2_B, ENC2_SW, PTT, DASH};
     for (int i = 0; i < 8; i++)
     {
         // if gpio_num_is_valid(ENC1_A);
