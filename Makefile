@@ -1,6 +1,39 @@
+# sBitx controller for HERMES
+#
+# Copyright (C) 2024 Rhizomatica
+# Author: Rafael Diniz <rafael@riseup.net>
+#
+# This is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this software; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street,
+# Boston, MA 02110-1301, USA.
+#
+
+uname_p := $(shell uname -m)
+
 CC=gcc
-CFLAGS=-g -Wall -std=gnu11
 LDFLAGS=-lwiringPi -li2c
+
+ifeq (${uname_p},aarch64)
+# aarch64 Raspberry Pi 4 or better
+	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -moutline-atomics -march=armv8-a+crc
+# for Pi 5 use:
+#	CFLAGS=-O3 -Wall -std=gnu11 -pthread -fstack-protector -march=armv8.2-a+crypto+fp16+rcpc+dotprod -I/usr/include/iniparser
+else
+# x86_64 with SSE 4.2 level or better
+	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -march=x86-64-v2
+endif
+
 
 .PHONY: clean
 
