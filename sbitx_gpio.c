@@ -22,6 +22,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
+#include <errno.h>
 
 #include "gpiolib/gpiolib.h"
 #include "sbitx_gpio.h"
@@ -47,10 +49,19 @@ void gpio_init(radio *radio_h)
     radio_gpio_h = radio_h;
 
     int ret = gpiolib_init();
-
     if (ret < 0)
     {
         printf("Failed to initialise gpiolib - %d\n", ret);
+        return ;
+    }
+
+    ret = gpiolib_mmap();
+    if (ret)
+    {
+        if (ret == EACCES && geteuid())
+            printf("Must be root\n");
+        else
+            printf("Failed to mmap gpiolib - %s\n", strerror(ret));
         return ;
     }
 
@@ -63,7 +74,7 @@ void gpio_init(radio *radio_h)
     }
 
     gpio_set_dir(TX_LINE, DIR_OUTPUT);
-    gpio_set_dir(TX_POWER, DIR_OUTPUT);
+    // gpio_set_dir(TX_POWER, DIR_OUTPUT);
     gpio_set_dir(LPF_A, DIR_OUTPUT);
     gpio_set_dir(LPF_B, DIR_OUTPUT);
     gpio_set_dir(LPF_C, DIR_OUTPUT);
@@ -75,7 +86,7 @@ void gpio_init(radio *radio_h)
     gpio_set_drive(LPF_C, DRIVE_LOW);
     gpio_set_drive(LPF_D, DRIVE_LOW);
     gpio_set_drive(TX_LINE, DRIVE_LOW);
-    gpio_set_drive(TX_POWER, DRIVE_LOW);
+    // gpio_set_drive(TX_POWER, DRIVE_LOW);
 
     // Initialize our two encoder structs (front pannel knobs)
     enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
