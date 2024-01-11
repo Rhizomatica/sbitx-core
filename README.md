@@ -5,7 +5,7 @@ code implementation of the sBitx functionatilies. The following features
 are currently implemented:
 
 * I2C communication to the Si5351a and ATTiny85 (power fwd and ref readings)
-* GPIO using the WiringPi library, for all kind of radio controls (encoders, lpf bank, tx/rx)
+* GPIO using the pinctrl's GPIOLIB library, for all kind of radio controls (encoders, lpf bank, tx/rx)
 * Si5351a control functions
 
 The source simple_radio.c demonstrates how to use some of currently implemented features. The source ptt_on.c puts the radio in transmit mode in a desired frequency.

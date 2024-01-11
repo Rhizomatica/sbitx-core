@@ -103,10 +103,11 @@ void gpio_init(radio *radio_h)
     do_gpio_poll_add(PTT);
     do_gpio_poll_add(DASH);
 
-    //do_gpio_poll(void);
+    // TODO: Put me in my own thread!
+    // do_gpio_poll(void);
 
-    // old WiringPi, for the reference
 #if 0
+    // REMOVE-ME: old WiringPi, for the reference
     // Setting the callback for the encoders interrupts
     wiringPiISR(ENC2_A, INT_EDGE_BOTH, tuning_isr_b);
     wiringPiISR(ENC2_B, INT_EDGE_BOTH, tuning_isr_b);
