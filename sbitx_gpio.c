@@ -1,5 +1,5 @@
 /* sBitx core
- * Copyright (C) 2023 Rhizomatica
+ * Copyright (C) 2023-2024 Rhizomatica
  * Author: Rafael Diniz <rafael@riseup.net>
  *
  * This is free software; you can redistribute it and/or modify
@@ -20,12 +20,24 @@
  */
 
 #include <stdbool.h>
-#include <wiringPi.h>
+#include <stdio.h>
+#include <unistd.h>
 
+#include "gpiolib/gpiolib.h"
 #include "sbitx_gpio.h"
 
 // global radio handle pointer used for the callback functions
 radio *radio_gpio_h;
+
+struct poll_gpio_state {
+    unsigned int num;
+    unsigned int gpio;
+    const char *name;
+    int level;
+};
+
+int num_poll_gpios;
+struct poll_gpio_state *poll_gpios;
 
 // for now this initializes the GPIO and also initializes the structures for
 // encoder/knobs for easy reading by application
@@ -34,30 +46,36 @@ void gpio_init(radio *radio_h)
     // we need the radio handler available for the callbacks.
     radio_gpio_h = radio_h;
 
-    // GPIO SETUP
-    wiringPiSetup();
+    int ret = gpiolib_init();
 
-    // TODO: change the number to the #defines for easier reading
-    char pins[13] = {0, 2, 3, 6, 7, 10, 11, 12, 13, 14, 21, 25, 27};
-    for (int i = 0; i < 13; i++)
+    if (ret < 0)
     {
-        pinMode(pins[i], INPUT);
-        pullUpDnControl(pins[i], PUD_UP);
+        printf("Failed to initialise gpiolib - %d\n", ret);
+        return ;
     }
 
+    char pins[8] = {ENC1_A, ENC1_B, ENC1_SW, ENC2_A, ENC2_B, ENC2_SW, PTT, DASH};
+    for (int i = 0; i < 8; i++)
+    {
+        // if gpio_num_is_valid(ENC1_A);
+        gpio_set_dir(pins[i], DIR_INPUT);
+        gpio_set_pull(pins[i], PULL_UP);
+    }
+
+    gpio_set_dir(TX_LINE, DIR_OUTPUT);
+    gpio_set_dir(TX_POWER, DIR_OUTPUT);
+    gpio_set_dir(LPF_A, DIR_OUTPUT);
+    gpio_set_dir(LPF_B, DIR_OUTPUT);
+    gpio_set_dir(LPF_C, DIR_OUTPUT);
+    gpio_set_dir(LPF_D, DIR_OUTPUT);
+
     //setup the LPFs and TX lines to initial state
-    pinMode(TX_LINE, OUTPUT);
-    pinMode(TX_POWER, OUTPUT);
-    pinMode(LPF_A, OUTPUT);
-    pinMode(LPF_B, OUTPUT);
-    pinMode(LPF_C, OUTPUT);
-    pinMode(LPF_D, OUTPUT);
-    digitalWrite(LPF_A, LOW);
-    digitalWrite(LPF_B, LOW);
-    digitalWrite(LPF_C, LOW);
-    digitalWrite(LPF_D, LOW);
-    digitalWrite(TX_LINE, LOW);
-    digitalWrite(TX_POWER, LOW);
+    gpio_set_drive(LPF_A, DRIVE_LOW);
+    gpio_set_drive(LPF_B, DRIVE_LOW);
+    gpio_set_drive(LPF_C, DRIVE_LOW);
+    gpio_set_drive(LPF_D, DRIVE_LOW);
+    gpio_set_drive(TX_LINE, DRIVE_LOW);
+    gpio_set_drive(TX_POWER, DRIVE_LOW);
 
     // Initialize our two encoder structs (front pannel knobs)
     enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
@@ -66,6 +84,8 @@ void gpio_init(radio *radio_h)
     radio_h->volume_ticks = 0;
     radio_h->tuning_ticks = 0;
 
+    // we need to import the poll functions
+#if 0
     // Setting the callback for the encoders interrupts
     wiringPiISR(ENC2_A, INT_EDGE_BOTH, tuning_isr_b);
     wiringPiISR(ENC2_B, INT_EDGE_BOTH, tuning_isr_b);
@@ -78,6 +98,7 @@ void gpio_init(radio *radio_h)
 
     wiringPiISR(PTT, INT_EDGE_BOTH, ptt_change);
     wiringPiISR(DASH, INT_EDGE_BOTH, dash_change);
+#endif
 }
 
 
@@ -91,7 +112,7 @@ void enc_init(encoder *e, int speed, int pin_a, int pin_b)
 
 void ptt_change()
 {
-    if (digitalRead(PTT) == LOW)
+    if (gpio_get_level(PTT) == 0)
         radio_gpio_h->key_down = true;
     else
         radio_gpio_h->key_down = false;
@@ -99,7 +120,7 @@ void ptt_change()
 
 void dash_change()
 {
-    if (digitalRead(DASH) == LOW)
+    if (gpio_get_level(DASH) == 0)
         radio_gpio_h->dash_down = true;
     else
         radio_gpio_h->dash_down = false;
@@ -152,7 +173,7 @@ void tuning_isr_b(void)
 
 int enc_state (encoder *e)
 {
-    return (digitalRead(e->pin_a) ? 1 : 0) + (digitalRead(e->pin_b) ? 2: 0);
+    return (gpio_get_level(e->pin_a) ? 1 : 0) + (gpio_get_level(e->pin_b) ? 2: 0);
 }
 
 int enc_read(encoder *e)
@@ -163,7 +184,7 @@ int enc_read(encoder *e)
     newState = enc_state(e); // Get current state
 
     if (newState != e->prev_state)
-        delay (1);
+        usleep(1000); // 1ms
 
     if (enc_state(e) != newState || newState == e->prev_state)
         return 0;
@@ -198,3 +219,5 @@ int enc_read(encoder *e)
 
     return result;
 }
+
+// imported from pinctrl.c libgpio cli

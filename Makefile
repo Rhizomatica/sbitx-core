@@ -22,7 +22,7 @@
 uname_p := $(shell uname -m)
 
 CC=gcc
-LDFLAGS=-lwiringPi -li2c
+LDFLAGS=-li2c
 
 ifeq (${uname_p},aarch64)
 # aarch64 Raspberry Pi 4 or better

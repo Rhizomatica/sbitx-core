@@ -24,8 +24,9 @@
 #include "sbitx_gpio.h"
 #include "sbitx_si5351.h"
 
+#include "gpiolib/gpiolib.h"
+
 #include <string.h>
-#include <wiringPi.h>
 #include <unistd.h>
 
 void hw_init(radio *radio_h)
@@ -114,11 +115,10 @@ void set_frequency(radio *radio_h, uint32_t frequency)
 
 void lpf_off(radio *radio_h)
 {
-    digitalWrite(LPF_A, LOW);
-    digitalWrite(LPF_B, LOW);
-    digitalWrite(LPF_C, LOW);
-    digitalWrite(LPF_D, LOW);
-
+    gpio_set_drive(LPF_A, DRIVE_LOW);
+    gpio_set_drive(LPF_B, DRIVE_LOW);
+    gpio_set_drive(LPF_C, DRIVE_LOW);
+    gpio_set_drive(LPF_D, DRIVE_LOW);
 }
 
 void lpf_set(radio *radio_h)
@@ -134,7 +134,7 @@ void lpf_set(radio *radio_h)
     else if (radio_h->frequency < 30000000)
         lpf = LPF_A;
 
-    digitalWrite(lpf, HIGH);
+    gpio_set_drive(lpf, DRIVE_HIGH);
 }
 
 
@@ -147,16 +147,18 @@ void tr_switch(radio *radio_h, bool txrx_state){
     {
         radio_h->txrx_state = IN_TX;
 
-        lpf_off(radio_h); delay(2);
-        digitalWrite(TX_LINE, HIGH); delay(2);
+        lpf_off(radio_h); usleep(2000);
+        gpio_set_drive(TX_LINE, DRIVE_HIGH); usleep(2000);
         lpf_set(radio_h);
+        // gpio_set_drive(TX_POWER, DRIVE_HIGH);
     }
     else
     {
         radio_h->txrx_state = IN_RX;
 
-        lpf_off(radio_h); delay(2);
-        digitalWrite(TX_LINE, LOW); delay(2);
+        lpf_off(radio_h); usleep(2000);
+        gpio_set_drive(TX_LINE, DRIVE_LOW); usleep(2000);
         lpf_set(radio_h);
+        // gpio_set_drive(TX_POWER, DRIVE_LOW);
     }
 }
