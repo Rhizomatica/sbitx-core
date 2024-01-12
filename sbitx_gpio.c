@@ -66,25 +66,36 @@ void gpio_init(radio *radio_h)
     unsigned pins[8] = {ENC1_A, ENC1_B, ENC1_SW, ENC2_A, ENC2_B, ENC2_SW, PTT, DASH};
     for (int i = 0; i < 8; i++)
     {
-        // if gpio_num_is_valid(ENC1_A);
+        gpio_set_fsel(pins[i], GPIO_FSEL_INPUT);
         gpio_set_dir(pins[i], DIR_INPUT);
         gpio_set_pull(pins[i], PULL_UP);
     }
 
+    gpio_set_fsel(TX_LINE, GPIO_FSEL_OUTPUT);
     gpio_set_dir(TX_LINE, DIR_OUTPUT);
-    // gpio_set_dir(TX_POWER, DIR_OUTPUT); // not used in v2 and v3
+    gpio_set_fsel(LPF_A, GPIO_FSEL_OUTPUT);
     gpio_set_dir(LPF_A, DIR_OUTPUT);
+    gpio_set_fsel(LPF_B, GPIO_FSEL_OUTPUT);
     gpio_set_dir(LPF_B, DIR_OUTPUT);
+    gpio_set_fsel(LPF_C, GPIO_FSEL_OUTPUT);
     gpio_set_dir(LPF_C, DIR_OUTPUT);
+    gpio_set_fsel(LPF_D, GPIO_FSEL_OUTPUT);
     gpio_set_dir(LPF_D, DIR_OUTPUT);
 
+#ifdef SBITX_DE
+    gpio_set_fsel(TX_POWER, GPIO_FSEL_OUTPUT);
+    gpio_set_dir(TX_POWER, DIR_OUTPUT);
+#endif
     //setup the LPFs and TX lines to initial state
     gpio_set_drive(LPF_A, DRIVE_LOW);
     gpio_set_drive(LPF_B, DRIVE_LOW);
     gpio_set_drive(LPF_C, DRIVE_LOW);
     gpio_set_drive(LPF_D, DRIVE_LOW);
     gpio_set_drive(TX_LINE, DRIVE_LOW);
-    // gpio_set_drive(TX_POWER, DRIVE_LOW); // not used in v2 and v3
+
+#ifdef SBITX_DE
+    gpio_set_drive(TX_POWER, DRIVE_LOW); // not used in v2 and v3
+#endif
 
     // Initialize our two encoder structs (front pannel knobs)
     enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
@@ -108,9 +119,6 @@ void gpio_init(radio *radio_h)
     // start hw io monitor thread
     pthread_t hw_tid;
     pthread_create(&hw_tid, NULL, do_gpio_poll, (void *) radio_h);
-    // TODO: Put me in my own thread!
-    // do_gpio_poll(void);
-
 }
 
 
