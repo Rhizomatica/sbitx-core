@@ -111,21 +111,6 @@ void gpio_init(radio *radio_h)
     // TODO: Put me in my own thread!
     // do_gpio_poll(void);
 
-#if 0
-    // REMOVE-ME: old WiringPi, for the reference
-    // Setting the callback for the encoders interrupts
-    wiringPiISR(ENC2_A, INT_EDGE_BOTH, tuning_isr_b);
-    wiringPiISR(ENC2_B, INT_EDGE_BOTH, tuning_isr_b);
-
-    wiringPiISR(ENC1_A, INT_EDGE_BOTH, tuning_isr_a);
-    wiringPiISR(ENC1_B, INT_EDGE_BOTH, tuning_isr_a);
-
-    wiringPiISR(ENC1_SW, INT_EDGE_FALLING, knob_a_pressed);
-    wiringPiISR(ENC2_SW, INT_EDGE_FALLING, knob_b_pressed);
-
-    wiringPiISR(PTT, INT_EDGE_BOTH, ptt_change);
-    wiringPiISR(DASH, INT_EDGE_BOTH, dash_change);
-#endif
 }
 
 
@@ -155,12 +140,22 @@ void dash_change()
 
 void knob_a_pressed(void)
 {
-    radio_gpio_h->knob_a_pressed++;
+    static bool first = true;
+
+    if (!first)
+        radio_gpio_h->knob_a_pressed++;
+    else
+        first = false;
 }
 
 void knob_b_pressed(void)
 {
-    radio_gpio_h->knob_b_pressed++;
+    static bool first = true;
+
+    if (!first)
+        radio_gpio_h->knob_b_pressed++;
+    else
+        first = false;
 }
 
 
