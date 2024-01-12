@@ -19,6 +19,8 @@
  *
  */
 
+#define _GNU_SOURCE
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -27,7 +29,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <sys/time.h>
-
+#include <sched.h>
 
 #include "gpiolib/gpiolib.h"
 #include "sbitx_gpio.h"
@@ -103,6 +105,9 @@ void gpio_init(radio *radio_h)
     do_gpio_poll_add(PTT);
     do_gpio_poll_add(DASH);
 
+    // start hw io monitor thread
+    pthread_t hw_tid;
+    pthread_create(&hw_tid, NULL, do_gpio_poll, (void *) radio_h);
     // TODO: Put me in my own thread!
     // do_gpio_poll(void);
 
@@ -273,8 +278,9 @@ static int do_gpio_poll_add(unsigned int gpio)
     return 0;
 }
 
-static void do_gpio_poll(void)
+void *do_gpio_poll(void *radio_h_v)
 {
+//    radio *radio_h = (radio *) radio_h_v;
     unsigned int idle_count = 0;
     struct timeval idle_start;
     int i;
@@ -292,13 +298,41 @@ static void do_gpio_poll(void)
                 {
                     struct timeval now;
                     uint64_t interval_us;
-
                     gettimeofday(&now, NULL);
                     interval_us =
                         (uint64_t)(now.tv_sec - idle_start.tv_sec) * 1000000 +
                         (now.tv_usec - idle_start.tv_usec);
                     printf("+%" PRIu64 "us\n", interval_us);
                     idle_count = 0;
+                }
+                switch (state->gpio)
+                {
+                case PTT:
+                    ptt_change();
+                    break;
+                case DASH:
+                    dash_change();
+                    break;
+                case ENC1_A:
+                    tuning_isr_a();
+                    break;
+                case ENC1_B:
+                    tuning_isr_a();
+                    break;
+                case ENC1_SW:
+                    knob_a_pressed();
+                    break;
+                case ENC2_A:
+                    tuning_isr_b();
+                    break;
+                case ENC2_B:
+                    tuning_isr_b();
+                    break;
+                case ENC2_SW:
+                    knob_b_pressed();
+                    break;
+                default:
+                    printf("Wrong GPIO\n");
                 }
                 printf("%2d: %s // %s\n", state->num, level ? "hi" : "lo", state->name);
                 state->level = level;
@@ -310,6 +344,9 @@ static void do_gpio_poll(void)
             if (!idle_count)
                 gettimeofday(&idle_start, NULL);
             idle_count++;
+            sched_yield();
         }
     }
+
+    return NULL;
 }
