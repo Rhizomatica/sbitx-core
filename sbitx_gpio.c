@@ -281,8 +281,6 @@ static int do_gpio_poll_add(unsigned int gpio)
 void *do_gpio_poll(void *radio_h_v)
 {
 //    radio *radio_h = (radio *) radio_h_v;
-    unsigned int idle_count = 0;
-    struct timeval idle_start;
     int i;
 
     while (num_poll_gpios && !shutdown)
@@ -294,17 +292,6 @@ void *do_gpio_poll(void *radio_h_v)
             int level = gpio_get_level(state->gpio);
             if (level != state->level)
             {
-                if (idle_count)
-                {
-                    struct timeval now;
-                    uint64_t interval_us;
-                    gettimeofday(&now, NULL);
-                    interval_us =
-                        (uint64_t)(now.tv_sec - idle_start.tv_sec) * 1000000 +
-                        (now.tv_usec - idle_start.tv_usec);
-                    printf("+%" PRIu64 "us\n", interval_us);
-                    idle_count = 0;
-                }
                 switch (state->gpio)
                 {
                 case PTT:
@@ -334,17 +321,14 @@ void *do_gpio_poll(void *radio_h_v)
                 default:
                     printf("Wrong GPIO\n");
                 }
-                printf("%2d: %s // %s\n", state->num, level ? "hi" : "lo", state->name);
+                // printf("%2d: %s // %s\n", state->num, level ? "hi" : "lo", state->name);
                 state->level = level;
                 changed = 1;
             }
         }
         if (!changed)
         {
-            if (!idle_count)
-                gettimeofday(&idle_start, NULL);
-            idle_count++;
-            sched_yield();
+            usleep(10);
         }
     }
 
