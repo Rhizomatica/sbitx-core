@@ -27,13 +27,13 @@
 #include <pthread.h>
 
 /* GPIO Pin definitions  // Hardware 40-header numbering commented */
-#define ENC1_A   17 // Pin 11
-#define ENC1_B   27 // Pin 13
-#define ENC1_SW  22 // Pin 15
+#define ENC1_A    9 // Pin 21
+#define ENC1_B   10 // Pin 19
+#define ENC1_SW  11 // Pin 23
 
-#define ENC2_A   10 // Pin 19
-#define ENC2_B    9 // Pin 21
-#define ENC2_SW  11 // Pin 23
+#define ENC2_A   17 // Pin 11
+#define ENC2_B   27 // Pin 13
+#define ENC2_SW  22 // Pin 15
 
 #define PTT       4 // Pin 7
 #define DASH      5 // Pin 29
