@@ -321,14 +321,13 @@ void *do_gpio_poll(void *radio_h_v)
                 default:
                     printf("Wrong GPIO\n");
                 }
-                // printf("%2d: %s // %s\n", state->num, level ? "hi" : "lo", state->name);
                 state->level = level;
                 changed = 1;
             }
         }
         if (!changed)
         {
-            usleep(10);
+            usleep(1000); // 1 ms loop
         }
     }
 
