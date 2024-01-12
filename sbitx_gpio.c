@@ -258,7 +258,7 @@ struct poll_gpio_state {
 int num_poll_gpios;
 struct poll_gpio_state *poll_gpios;
 
-static int do_gpio_poll_add(unsigned int gpio)
+int do_gpio_poll_add(unsigned int gpio)
 {
     struct poll_gpio_state *new_gpio;
     unsigned int num = gpio;
