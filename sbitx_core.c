@@ -125,13 +125,13 @@ void lpf_set(radio *radio_h)
 {
     int lpf = 0;
 
-    if (radio_h->frequency < 5500000)
+    if (radio_h->frequency < 5250000)
         lpf = LPF_D;
     else if (radio_h->frequency < 10500000)
         lpf = LPF_C;
     else if (radio_h->frequency < 18500000)
         lpf = LPF_B;
-    else if (radio_h->frequency < 30000000)
+    else if (radio_h->frequency < 35000000)
         lpf = LPF_A;
 
     gpio_set_drive(lpf, DRIVE_HIGH);
