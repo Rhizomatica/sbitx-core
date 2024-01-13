@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <sys/time.h>
-#include <sched.h>
 
 #include "gpiolib/gpiolib.h"
 #include "sbitx_gpio.h"
