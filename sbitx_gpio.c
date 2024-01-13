@@ -19,8 +19,6 @@
  *
  */
 
-#define _GNU_SOURCE
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -63,7 +61,7 @@ void gpio_init(radio *radio_h)
         return ;
     }
 
-    unsigned pins[8] = {ENC1_A, ENC1_B, ENC1_SW, ENC2_A, ENC2_B, ENC2_SW, PTT, DASH};
+    unsigned int pins[8] = {ENC1_A, ENC1_B, ENC1_SW, ENC2_A, ENC2_B, ENC2_SW, PTT, DASH};
     for (int i = 0; i < 8; i++)
     {
         gpio_set_fsel(pins[i], GPIO_FSEL_INPUT);
