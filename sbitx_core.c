@@ -45,8 +45,7 @@ void hw_shutdown(radio *radio_h)
 {
     i2c_close(radio_h);
 
-    // WiringPi has no function to close/shutdown resources
-    // should we stop the Si5351 clocks?
+    // de-init something in gpiolib?
 }
 
 // reads the power measurements from I2C bus
