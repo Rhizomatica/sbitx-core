@@ -28,7 +28,7 @@ ifeq (${uname_p},aarch64)
 # aarch64 Raspberry Pi 4 or better
 	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -moutline-atomics -march=armv8-a+crc
 # for Pi 5 use:
-#	CFLAGS=-O3 -Wall -std=gnu11 -pthread -fstack-protector -march=armv8.2-a+crypto+fp16+rcpc+dotprod -I/usr/include/iniparser
+#	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -march=armv8.2-a+crypto+fp16+rcpc+dotprod
 else
 # x86_64 with SSE 4.2 level or better
 	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -march=x86-64-v2
