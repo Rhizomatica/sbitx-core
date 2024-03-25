@@ -12,7 +12,7 @@ The following features are currently implemented:
 The source simple_radio.c demonstrates how to use some of currently implemented features. The source ptt_on.c puts the radio in transmit mode in a desired frequency.
 
 
-This code expects the I2C bus to be kernel I2C interface. Make sure you have one of the dtoverlays
+This code expects the I2C bus to be kernel I2C interface. Make sure you have one of the dtoverlay lines below
 in /boot/config.txt
 
 For loading the I2C Bit-Banged (BB) driver in the appropriate sBitx pins, with kernel RTC clock driver loaded (for use as system clock, this is what I use):
