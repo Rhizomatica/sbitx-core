@@ -1,7 +1,7 @@
 # sbitx-core
 
 This is the sbitx-core. Sbitx-core is intendend to be a simple C
-code implementation of the sBitx functionatilies. For Raspberry Pi 5 support (also supports Pi 4), use the gpiolib branch at: https://github.com/Rhizomatica/sbitx-core/tree/gpiolib
+code implementation of the sBitx functionatilies. For I/O implementation using gpiolib, use the "gpiolib" branch at: https://github.com/Rhizomatica/sbitx-core/tree/gpiolib
 
 The following features are currently implemented:
 
