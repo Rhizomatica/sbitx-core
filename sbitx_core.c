@@ -24,12 +24,106 @@
 #include "sbitx_gpio.h"
 #include "sbitx_si5351.h"
 
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <string.h>
 #include <wiringPi.h>
 #include <unistd.h>
 
+static char *trim_whitespace(char *text)
+{
+    while (*text && isspace((unsigned char) *text))
+        text++;
+
+    if (!*text)
+        return text;
+
+    char *end = text + strlen(text) - 1;
+    while (end > text && isspace((unsigned char) *end))
+        *end-- = '\0';
+
+    return text;
+}
+
+static bool is_profile_value(const char *value, const char *profile_name)
+{
+    return !strcasecmp(value, profile_name);
+}
+
+static void radio_set_legacy_hw_profile(radio *radio_h, const char *value)
+{
+    long hw = strtol(value, NULL, 10);
+
+    if (hw == 4)
+        radio_h->profile = RADIO_PROFILE_ZBITX;
+    else if (hw == 1)
+        radio_h->profile = RADIO_PROFILE_SBITX;
+}
+
+static bool radio_is_zbitx(const radio *radio_h)
+{
+    return radio_h->profile == RADIO_PROFILE_ZBITX;
+}
+
+bool radio_load_hw_settings(radio *radio_h, const char *path)
+{
+    FILE *settings = fopen(path, "r");
+    if (!settings)
+        return false;
+
+    char line[256];
+    while (fgets(line, sizeof(line), settings))
+    {
+        char *entry = trim_whitespace(line);
+
+        if (!*entry || *entry == '#' || *entry == ';' || *entry == '[')
+            continue;
+
+        char *separator = strchr(entry, '=');
+        if (!separator)
+            continue;
+
+        *separator = '\0';
+        char *key = trim_whitespace(entry);
+        char *value = trim_whitespace(separator + 1);
+
+        if (!strcmp(key, "bfo_freq"))
+            radio_h->bfo_frequency = strtoul(value, NULL, 10);
+        else if (!strcmp(key, "hw"))
+            radio_set_legacy_hw_profile(radio_h, value);
+        else if (!strcmp(key, "radio") || !strcmp(key, "profile"))
+        {
+            if (is_profile_value(value, "sbitx"))
+                radio_h->profile = RADIO_PROFILE_SBITX;
+            else if (is_profile_value(value, "zbitx"))
+                radio_h->profile = RADIO_PROFILE_ZBITX;
+        }
+    }
+
+    fclose(settings);
+    return true;
+}
+
+void radio_apply_defaults(radio *radio_h)
+{
+    if (radio_h->profile == RADIO_PROFILE_UNKNOWN)
+        radio_h->profile = RADIO_PROFILE_SBITX;
+
+    if (!radio_h->bfo_frequency)
+        radio_h->bfo_frequency = radio_is_zbitx(radio_h) ? ZBITX_BFO_FREQUENCY : SBITX_BFO_FREQUENCY;
+}
+
+const char *radio_profile_name(const radio *radio_h)
+{
+    return radio_is_zbitx(radio_h) ? "zbitx" : "sbitx";
+}
+
 void hw_init(radio *radio_h)
 {
+    radio_apply_defaults(radio_h);
+
     // I2C SETUP
     i2c_open(radio_h);
 
@@ -118,6 +212,8 @@ void lpf_off(radio *radio_h)
     digitalWrite(LPF_B, LOW);
     digitalWrite(LPF_C, LOW);
     digitalWrite(LPF_D, LOW);
+    if (radio_is_zbitx(radio_h))
+        digitalWrite(ZBITX_LPF_E, LOW);
 
 }
 
@@ -134,7 +230,8 @@ void lpf_set(radio *radio_h)
     else if (radio_h->frequency < 30000000)
         lpf = LPF_A;
 
-    digitalWrite(lpf, HIGH);
+    if (lpf)
+        digitalWrite(lpf, HIGH);
 }
 
 
@@ -147,16 +244,28 @@ void tr_switch(radio *radio_h, bool txrx_state){
     {
         radio_h->txrx_state = IN_TX;
 
-        lpf_off(radio_h); delay(2);
-        digitalWrite(TX_LINE, HIGH); delay(2);
+        if (radio_is_zbitx(radio_h))
+        {
+            digitalWrite(ZBITX_RX_LINE, LOW);
+            delay(2);
+        }
+        lpf_off(radio_h);
+        delay(2);
+        digitalWrite(TX_LINE, HIGH);
+        delay(2);
         lpf_set(radio_h);
     }
     else
     {
         radio_h->txrx_state = IN_RX;
 
-        lpf_off(radio_h); delay(2);
-        digitalWrite(TX_LINE, LOW); delay(2);
-        lpf_set(radio_h);
+        lpf_off(radio_h);
+        delay(2);
+        digitalWrite(TX_LINE, LOW);
+        delay(2);
+        if (radio_is_zbitx(radio_h))
+            digitalWrite(ZBITX_RX_LINE, HIGH);
+        else
+            lpf_set(radio_h);
     }
 }

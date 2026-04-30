@@ -27,11 +27,16 @@ LDFLAGS=-lwiringPi -li2c
 ifeq (${uname_p},aarch64)
 # aarch64 Raspberry Pi 4 or better
 	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -moutline-atomics -march=armv8-a+crc
+else ifeq (${uname_p},armv7l)
+# 32-bit Raspberry Pi userspace, including Pi Zero 2 W
+	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector
 # for Pi 5 use:
 #	CFLAGS=-O3 -Wall -std=gnu11 -pthread -fstack-protector -march=armv8.2-a+crypto+fp16+rcpc+dotprod -I/usr/include/iniparser
-else
+else ifeq (${uname_p},x86_64)
 # x86_64 with SSE 4.2 level or better
 	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector -march=x86-64-v2
+else
+	CFLAGS=-O3 -Wall -std=gnu11 -fstack-protector
 endif
 
 

@@ -37,7 +37,6 @@ void gpio_init(radio *radio_h)
     // GPIO SETUP
     wiringPiSetup();
 
-    // TODO: change the number to the #defines for easier reading
     char pins[13] = {0, 2, 3, 6, 7, 10, 11, 12, 13, 14, 21, 25, 27};
     for (int i = 0; i < 13; i++)
     {
@@ -45,19 +44,27 @@ void gpio_init(radio *radio_h)
         pullUpDnControl(pins[i], PUD_UP);
     }
 
-    //setup the LPFs and TX lines to initial state
-    pinMode(TX_LINE, OUTPUT);
-    pinMode(TX_POWER, OUTPUT);
-    pinMode(LPF_A, OUTPUT);
-    pinMode(LPF_B, OUTPUT);
-    pinMode(LPF_C, OUTPUT);
-    pinMode(LPF_D, OUTPUT);
+    // setup the LPFs and TX line to initial state
+    int output_pins[7] = {TX_LINE, LPF_A, LPF_B, LPF_C, LPF_D};
+    int output_pins_count = 5;
+    if (radio_h->profile == RADIO_PROFILE_ZBITX)
+    {
+        output_pins[output_pins_count++] = ZBITX_RX_LINE;
+        output_pins[output_pins_count++] = ZBITX_LPF_E;
+    }
+    for (int i = 0; i < output_pins_count; i++)
+        pinMode(output_pins[i], OUTPUT);
+
     digitalWrite(LPF_A, LOW);
     digitalWrite(LPF_B, LOW);
     digitalWrite(LPF_C, LOW);
     digitalWrite(LPF_D, LOW);
     digitalWrite(TX_LINE, LOW);
-    digitalWrite(TX_POWER, LOW);
+    if (radio_h->profile == RADIO_PROFILE_ZBITX)
+    {
+        digitalWrite(ZBITX_LPF_E, LOW);
+        digitalWrite(ZBITX_RX_LINE, HIGH);
+    }
 
     // Initialize our two encoder structs (front pannel knobs)
     enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);
