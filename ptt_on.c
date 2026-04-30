@@ -42,23 +42,26 @@ int main(int argc, char *argv[])
 
     signal(SIGINT, exit_ptt);
 
-    if (argc != 2)
+    if (argc < 2 || argc > 3)
     {
-        printf("Usage:\n%s <frequency in Hz>\n", argv[0]);
+        printf("Usage:\n%s <frequency in Hz> [hw_settings.ini]\n", argv[0]);
         return EXIT_FAILURE;
     }
     uint32_t frequency = atoi(argv[1]);
+    const char *hw_settings_path = (argc == 3) ? argv[2] : "conf/hw_settings_sbitx.ini";
 
     // these are mandatory fields to be filled before hw_init()
     memset(&radio_h, 0, sizeof(radio));
     strcpy(radio_h.i2c_device, "/dev/i2c-22");
-    radio_h.bfo_frequency = 40035000;
+    radio_h.profile = RADIO_PROFILE_UNKNOWN;
+    radio_load_hw_settings(&radio_h, hw_settings_path);
     radio_h.bridge_compensation = 100;
 
     hw_init(&radio_h);
 
     set_frequency(&radio_h, frequency);
-    printf("Frequency: %u.\n", frequency);
+    printf("Frequency: %u. Radio: %s. BFO: %u.\n",
+           frequency, radio_profile_name(&radio_h), radio_h.bfo_frequency);
 
     tr_switch(&radio_h, IN_TX);
     printf("PTT ON.\n\n");

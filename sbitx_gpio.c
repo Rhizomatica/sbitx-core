@@ -68,12 +68,20 @@ void gpio_init(radio *radio_h)
     }
 
     // OUTPUT pins
-    unsigned int output_pins[5] = {LPF_A, LPF_B, LPF_C, LPF_D, TX_LINE};
-    for (int i = 0; i < 5; i++)
+    unsigned int output_pins[7] = {LPF_A, LPF_B, LPF_C, LPF_D, TX_LINE};
+    int output_pins_count = 5;
+    if (radio_h->profile == RADIO_PROFILE_ZBITX)
+    {
+        output_pins[output_pins_count++] = ZBITX_RX_LINE;
+        output_pins[output_pins_count++] = ZBITX_LPF_E;
+    }
+    for (int i = 0; i < output_pins_count; i++)
     {
         gpio_set_drive(output_pins[i], DRIVE_LOW);
         gpio_set_fsel(output_pins[i], GPIO_FSEL_OUTPUT);
     }
+    if (radio_h->profile == RADIO_PROFILE_ZBITX)
+        gpio_set_drive(ZBITX_RX_LINE, DRIVE_HIGH);
 
     // Initialize our two encoder structs (front pannel knobs)
     enc_init(&radio_h->enc_a, ENC_FAST, ENC1_B, ENC1_A);

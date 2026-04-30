@@ -39,11 +39,15 @@
 #define DASH      5 // Pin 29
 
 #define TX_LINE  23 // Pin 16
-#define TX_POWER 16 // Pin 36
+#define ZBITX_RX_LINE  15 // Pin 10
 #define LPF_A    24 // Pin 18
 #define LPF_B    25 // Pin 22
 #define LPF_C     8 // Pin 24
 #define LPF_D     7 // Pin 26
+#define ZBITX_LPF_E 12 // Pin 32
+
+#define SBITX_BFO_FREQUENCY 40035000U
+#define ZBITX_BFO_FREQUENCY 40048000U
 
 /* Encoder speed defines */
 #define ENC_FAST 1
@@ -62,6 +66,13 @@ typedef struct
 	int history;
 } encoder;
 
+typedef enum
+{
+    RADIO_PROFILE_UNKNOWN = 0,
+    RADIO_PROFILE_SBITX,
+    RADIO_PROFILE_ZBITX,
+} radio_profile;
+
 // radio variables
 typedef struct
 {
@@ -73,6 +84,7 @@ typedef struct
     // Radio status
     uint32_t frequency;
     uint32_t bfo_frequency;
+    radio_profile profile;
     bool txrx_state; // IN_RX or IN_TX
 
     // front panel controls and status
@@ -99,6 +111,10 @@ typedef struct
 
 void hw_init(radio *radio_h);
 void hw_shutdown(radio *radio_h);
+
+bool radio_load_hw_settings(radio *radio_h, const char *path);
+void radio_apply_defaults(radio *radio_h);
+const char *radio_profile_name(const radio *radio_h);
 
 void set_frequency(radio *radio_h, uint32_t frequency);
 void tr_switch(radio *radio_h, bool txrx_state);
