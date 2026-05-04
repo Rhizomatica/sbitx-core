@@ -112,7 +112,6 @@ typedef struct
 void hw_init(radio *radio_h);
 void hw_shutdown(radio *radio_h);
 
-bool radio_load_hw_settings(radio *radio_h, const char *path);
 void radio_apply_defaults(radio *radio_h);
 const char *radio_profile_name(const radio *radio_h);
 

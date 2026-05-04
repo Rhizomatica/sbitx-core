@@ -21,14 +21,6 @@ The following features are currently implemented:
 
 The source simple_radio.c demonstrates how to use some of currently implemented features. The source ptt_on.c puts the radio in transmit mode in a desired frequency.
 
-There are two explicit radio profiles:
-
-* **sBitx**: `conf/hw_settings_sbitx.ini`
-* **zBitx**: `conf/hw_settings_zbitx.ini`
-
-The zBitx profile enables the extra zBitx control lines from the reference
-tree and uses its zBitx-specific BFO setting.
-
 
 This code expects the I2C bus to be kernel I2C interface. Make sure you have one of the dtoverlay lines below
 in /boot/config.txt
@@ -73,19 +65,19 @@ architecture on Raspberry Pi Zero 2 W systems.
 Both syntax are identical:
 
 ```
-# ptt_on <frequency in Hz> [profile.ini]
-# simple_radio <frequency in Hz> [profile.ini]
+# ptt_on <frequency in Hz> [sbitx|zbitx]
+# simple_radio <frequency in Hz> [sbitx|zbitx]
 ```
 
 * ptt_on: enables the transmission line, and disables at exit (use Ctrl+C)
 * simple_radio: a simple radio implementation which allows for debugging most of radio features
-* if `profile.ini` is omitted, the samples use `conf/hw_settings_sbitx.ini`
+* if the radio argument is omitted, the examples use `sbitx`
 
 Examples:
 
 ```
-./ptt_on 7100000 conf/hw_settings_sbitx.ini
-./ptt_on 7100000 conf/hw_settings_zbitx.ini
+./ptt_on 7100000 sbitx
+./ptt_on 7100000 zbitx
 ```
 
 # Tinkerer tips

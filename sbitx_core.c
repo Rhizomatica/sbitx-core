@@ -24,86 +24,14 @@
 #include "sbitx_gpio.h"
 #include "sbitx_si5351.h"
 
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
 #include <string.h>
 #include <wiringPi.h>
 #include <unistd.h>
 
-static char *trim_whitespace(char *text)
-{
-    while (*text && isspace((unsigned char) *text))
-        text++;
-
-    if (!*text)
-        return text;
-
-    char *end = text + strlen(text) - 1;
-    while (end > text && isspace((unsigned char) *end))
-        *end-- = '\0';
-
-    return text;
-}
-
-static bool is_profile_value(const char *value, const char *profile_name)
-{
-    return !strcasecmp(value, profile_name);
-}
-
-static void radio_set_legacy_hw_profile(radio *radio_h, const char *value)
-{
-    long hw = strtol(value, NULL, 10);
-
-    if (hw == 4)
-        radio_h->profile = RADIO_PROFILE_ZBITX;
-    else if (hw == 1)
-        radio_h->profile = RADIO_PROFILE_SBITX;
-}
-
 static bool radio_is_zbitx(const radio *radio_h)
 {
     return radio_h->profile == RADIO_PROFILE_ZBITX;
-}
-
-bool radio_load_hw_settings(radio *radio_h, const char *path)
-{
-    FILE *settings = fopen(path, "r");
-    if (!settings)
-        return false;
-
-    char line[256];
-    while (fgets(line, sizeof(line), settings))
-    {
-        char *entry = trim_whitespace(line);
-
-        if (!*entry || *entry == '#' || *entry == ';' || *entry == '[')
-            continue;
-
-        char *separator = strchr(entry, '=');
-        if (!separator)
-            continue;
-
-        *separator = '\0';
-        char *key = trim_whitespace(entry);
-        char *value = trim_whitespace(separator + 1);
-
-        if (!strcmp(key, "bfo_freq"))
-            radio_h->bfo_frequency = strtoul(value, NULL, 10);
-        else if (!strcmp(key, "hw"))
-            radio_set_legacy_hw_profile(radio_h, value);
-        else if (!strcmp(key, "radio") || !strcmp(key, "profile"))
-        {
-            if (is_profile_value(value, "sbitx"))
-                radio_h->profile = RADIO_PROFILE_SBITX;
-            else if (is_profile_value(value, "zbitx"))
-                radio_h->profile = RADIO_PROFILE_ZBITX;
-        }
-    }
-
-    fclose(settings);
-    return true;
 }
 
 void radio_apply_defaults(radio *radio_h)
